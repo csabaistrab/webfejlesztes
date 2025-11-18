@@ -1,8 +1,8 @@
-# 🎓 E-Learning Nyilvántartó Rendszer (Django Webalkalmazás)
+#  E-Learning Nyilvántartó Rendszer (Django Webalkalmazás)
 
 Ez a Django-alapú projekt egy egyszerű e-learning rendszert valósít meg, amely kezeli a Tanárokat, a Kurzusokat és a Hallgatók kurzusfelvételeit. A fejlesztés során hangsúlyt fektettünk az adatbázis-kapcsolatok, a biztonság és a modern, aszinkron interakciók megvalósítására.
 
-## ✨ Projektkövetelmények Teljesítése
+##  Projektkövetelmények Teljesítése
 
 A rendszer az alábbi fő követelményeket teljesíti:
 
@@ -15,7 +15,7 @@ A rendszer az alábbi fő követelményeket teljesíti:
 
 ---
 
-## 🛠️ Telepítési Útmutató (Helyi Környezet)
+##  Telepítési Útmutató (Helyi Környezet)
 
 A projekt futtatásához szükséges technológiák: **Python 3.x** és **Django**.
 
