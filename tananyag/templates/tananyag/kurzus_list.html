@@ -7,11 +7,14 @@
 <div class="header">
     <h1>E-Learning Hallgatói Felület</h1>
     <div class="header-right">
-        Szia, **{{ user.username }}**
+        <span class="me-3">Szia, <b>{{ user.hallgato.nev }}</b></span>
 
-        <a href="{% url 'hallgato_edit' %}" class="btn btn-sm btn-info">Profil Szerkesztése</a>
+        <a href="{% url 'hallgato_edit' %}" class="btn btn-info me-2">Profil Szerkesztése</a>
 
-        <a href="{% url 'logout' %}" class="btn btn-sm btn-secondary">Kijelentkezés</a>
+        <form method="post" action="{% url 'logout' %}" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-secondary">Kijelentkezés</button>
+        </form>
     </div>
 </div>
 
@@ -23,7 +26,7 @@
     {% for kurzus in kurzusok %}
     <div class="kurzus-kartya">
         <h3>{{ kurzus.nev }}</h3>
-        <p>Oktató: **{{ kurzus.tanar.nev }}**</p>
+        <p>Oktató: <b>{{ kurzus.tanar.nev }}</b></p>
         <p>{{ kurzus.leiras|default:"Nincs leírás." }}</p>
 
         {% if kurzus.id in felvett_kurzusok_id %}
@@ -45,14 +48,13 @@
 
 <script>
     // 1. CSRF Token kinyerése a rejtett mezőből
+    // Mivel a kijelentkezéshez most már formot használunk, a globális tokenre csak itt van szükségünk:
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     function kurzusFelvetel(buttonElement, kurzusId) {
 
-        // 2. Kérelem előkészítése (JSON adat)
         const data = JSON.stringify({ 'kurzus_id': kurzusId });
 
-        // Gomb letiltása a válasz megérkezéséig
         buttonElement.disabled = true;
         buttonElement.textContent = 'Feldolgozás...';
 
@@ -61,39 +63,33 @@
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                // 🔑 CSRF VÉDELEM
                 'X-CSRFToken': csrftoken
             },
             body: data
         })
         .then(response => {
-            // Ellenőrizzük, hogy a válasz státuszkódja sikeres-e (200-299)
             if (response.ok) {
                 return response.json();
             }
-            // Ha hiba van (pl. 400 Bad Request / Már felvette), dobjunk hibát
             return response.json().then(errorData => {
                 throw new Error(errorData.hiba || errorData.error || 'Ismeretlen hiba történt');
             });
         })
         .then(data => {
-            // 4. SIKERES VÁLASZ (views.py status=200)
+            // SIKERES VÁLASZ
             console.log('Sikeres felvétel:', data.siker || data.message);
 
-            // Frissítés: gomb állapotának változtatása
             buttonElement.classList.remove('btn-primary');
             buttonElement.classList.add('btn-success');
             buttonElement.textContent = 'Felvett kurzus';
-            // A gomb letiltása véglegesen, mert már felvette
             buttonElement.disabled = true;
 
         })
         .catch(error => {
-            // 5. HIBA KEZELÉSE (views.py status=400)
+            // HIBA KEZELÉSE
             console.error('Hiba:', error.message);
             alert('Kurzus felvétel hiba: ' + error.message);
 
-            // Visszaállítás hibánál
             buttonElement.disabled = false;
             buttonElement.textContent = 'Kurzus felvétele';
         });
@@ -101,7 +97,7 @@
 </script>
 
 <style>
-/* Egyszerű stílusok, a Bootstrap mellett */
+/* Egyszerű stílusok a tiszta megjelenéshez */
 .header {
     display: flex;
     justify-content: space-between;

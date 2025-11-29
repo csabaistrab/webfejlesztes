@@ -1,14 +1,18 @@
 {% extends 'base.html' %}
 
-{% block title %}Belépés{% endblock %}
+{% block title %}Hallgatói Belépés{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <h2 class="mt-5">Hallgatói Belépés</h2>
+<div class="container d-flex justify-content-center align-items-center" style="min-height: 85vh;">
+    <div class="card p-4 shadow-lg" style="width: 100%; max-width: 400px;">
+
+        <h2 class="card-title text-center mb-4">E-Learning Belépés</h2>
+        <hr>
 
         {% if form.errors %}
-            <p class="alert alert-danger">Hibás felhasználónév vagy jelszó. Próbálja újra.</p>
+            <div class="alert alert-danger" role="alert">
+                Hibás felhasználónév vagy jelszó. Próbálja újra!
+            </div>
         {% endif %}
 
         <form method="post" action="{% url 'login' %}">
@@ -16,15 +20,25 @@
 
             <div class="mb-3">
                 <label for="{{ form.username.id_for_label }}" class="form-label">Felhasználónév</label>
-                {{ form.username }}
+                <input type="text"
+                       name="{{ form.username.name }}"
+                       id="{{ form.username.id_for_label }}"
+                       class="form-control"
+                       required>
             </div>
 
             <div class="mb-3">
                 <label for="{{ form.password.id_for_label }}" class="form-label">Jelszó</label>
-                {{ form.password }}
+                <input type="password"
+                       name="{{ form.password.name }}"
+                       id="{{ form.password.id_for_label }}"
+                       class="form-control"
+                       required>
             </div>
 
-            <button type="submit" class="btn btn-primary">Belépés</button>
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg">Belépés</button>
+            </div>
 
             <input type="hidden" name="next" value="{{ next }}" />
         </form>
