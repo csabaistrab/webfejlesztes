@@ -4,6 +4,7 @@ from django.urls import path
 # A beépített Django belépés/kijelentkezés nézetei (views)
 from django.contrib.auth import views as auth_views
 from .views import KurzusListView, KurzusFelvetelView
+from . import views
 
 urlpatterns = [
     # 1. Főoldal: A kurzusok listája (http://127.0.0.1:8000/)
@@ -19,4 +20,6 @@ urlpatterns = [
 
     # 4. Kurzus felvétel API (5. követelmény: JavaScript)
     path('kurzus-felvetel/', KurzusFelvetelView.as_view(), name='kurzus_felvetel_api'),
+
+    path('profil/szerkesztes/', views.HallgatoUpdateView.as_view(), name='hallgato_edit'),
 ]

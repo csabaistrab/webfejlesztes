@@ -9,7 +9,10 @@ from django.views import View
 from django.views.decorators.csrf import csrf_exempt
 from django.utils.decorators import method_decorator
 import json
-
+from django.views.generic.edit import UpdateView
+from django.urls import reverse_lazy
+from django.http import Http404
+from .forms import HallgatoProfileForm
 
 # Kurzus Listázó Nézet (Hallgatói felület főoldala)
 class KurzusListView(LoginRequiredMixin, ListView):
@@ -69,3 +72,18 @@ class KurzusFelvetelView(View):
             return JsonResponse({'error': 'A kurzus nem található.'}, status=404)
         except Exception:
             return JsonResponse({'error': 'Hibás kérés vagy belső hiba.'}, status=400)
+
+class HallgatoUpdateView(LoginRequiredMixin, UpdateView):
+    """Hallgatói profil szerkesztése. Csak a saját profil módosítható."""
+    model = Hallgato
+    form_class = HallgatoProfileForm
+    template_name = 'tananyag/hallgato_form.html' # Ezt a sablont hozzuk létre
+    success_url = reverse_lazy('kurzus_list') # Sikeres mentés után visszairányítás a főoldalra
+
+    # 🔑 BIZTONSÁGI ELLENŐRZÉS: Csak a saját objektum szerkeszthető!
+    def get_object(self, queryset=None):
+        try:
+            # Csak azt a Hallgato objektumot kérjük le, ami az aktuálisan bejelentkezett User-hez tartozik
+            return self.request.user.hallgato
+        except Hallgato.DoesNotExist:
+            raise Http404("Hallgató profil nem található.")
