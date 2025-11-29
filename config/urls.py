@@ -1,17 +1,18 @@
-# config/urls.py
-
 from django.contrib import admin
-from django.urls import path, include  # <-- Fontos az 'include' import
+from django.urls import path, include
+from django.contrib.auth import views as auth_views  # <-- Ezt importálja!
 
 urlpatterns = [
-    # 1. Admin felület (CRUD és Biztonság)
+    # 1. Admin felület
     path('admin/', admin.site.urls),
 
-    # 2. Django Beépített Hitelesítés (accounts/login, accounts/logout)
-    # Ezzel oldjuk meg a korábbi 404-es hibát a /accounts/login/ útvonalon.
-    path('accounts/', include('django.contrib.auth.urls')),
+    # 2. 🎯 KONTROLLÁLT BEJELENTKEZÉS ÉS KIJELENTKEZÉS
+    # A Django beépített LoginView használata
+    path('login/', auth_views.LoginView.as_view(template_name='tananyag/login.html'), name='login'),
 
-    # 3. Saját Alkalmazás (A Hallgatói felület főoldala)
-    # Ez kapcsolja a http://127.0.0.1:8000/ címet a tananyag app útvonalaihoz.
+    # A Django beépített LogoutView használata (törli a sessiont!)
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
+
+    # 3. Saját Alkalmazás
     path('', include('tananyag.urls')),
 ]
