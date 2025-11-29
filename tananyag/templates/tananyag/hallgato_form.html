@@ -1,0 +1,9 @@
+<h2>Profil Szerkesztése</h2>
+<form method="post">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <button type="submit">Mentés</button>
+</form>
+<p><a href="{% url 'kurzus_list' %}">Vissza a kurzusokhoz</a></p>
