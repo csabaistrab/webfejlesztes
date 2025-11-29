@@ -6,7 +6,7 @@
 {% block content %}
 <div class="header">
     <h1>E-Learning Hallgatói Felület</h1>
-    <div class="header-right">
+    <div class="header-right d-flex align-items-center">
         <span class="me-3">Szia, <b>{{ user.hallgato.nev }}</b></span>
 
         <a href="{% url 'hallgato_edit' %}" class="btn btn-info me-2">Profil Szerkesztése</a>
@@ -24,8 +24,8 @@
 
 <div class="kurzus-container">
     {% for kurzus in kurzusok %}
-    <div class="kurzus-kartya">
-        <h3>{{ kurzus.nev }}</h3>
+    <div class="card kurzus-kartya p-3">
+        <h3><b>{{ kurzus.nev }}</b></h3>
         <p>Oktató: <b>{{ kurzus.tanar.nev }}</b></p>
         <p>{{ kurzus.leiras|default:"Nincs leírás." }}</p>
 
@@ -47,8 +47,7 @@
 {% csrf_token %}
 
 <script>
-    // 1. CSRF Token kinyerése a rejtett mezőből
-    // Mivel a kijelentkezéshez most már formot használunk, a globális tokenre csak itt van szükségünk:
+    // 1. CSRF Token kinyerése
     const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
     function kurzusFelvetel(buttonElement, kurzusId) {
@@ -59,7 +58,7 @@
         buttonElement.textContent = 'Feldolgozás...';
 
         // 3. FETCH API Hívás indítása
-        fetch('/api/kurzus-felvetel/', {
+        fetch('{% url "kurzus_felvetel" %}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -72,6 +71,7 @@
                 return response.json();
             }
             return response.json().then(errorData => {
+                // Hiba esetén is JSON-t vár a szervertől (a views.py miatt)
                 throw new Error(errorData.hiba || errorData.error || 'Ismeretlen hiba történt');
             });
         })
@@ -111,7 +111,6 @@
 }
 .kurzus-kartya {
     border: 1px solid #ccc;
-    padding: 15px;
     width: 300px;
     box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
 }
